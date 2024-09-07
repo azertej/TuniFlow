@@ -1,0 +1,5 @@
+Setup ----
+( Install Extensions Needed : eslint - prettier - prettier eslint )
+1/ Installation
+2/ eslint and prettier Setup
+3/ tailwind Setup
