@@ -2,4 +2,9 @@ Setup ----
 ( Install Extensions Needed : eslint - prettier - prettier eslint )
 1/ Installation
 2/ eslint and prettier Setup
-3/ tailwind Setup
+3/ github Setup
+4/ tailwind Setup
+5/ add folders and set the app structures
+-----
+auth setup
+1/ clerk setup
