@@ -1,4 +1,6 @@
-import Navbar from "@/components/shared/Navbar";
+import LeftSiderbare from "@/components/leftSiderbare";
+import RightSiderbare from "@/components/rightSiderbare";
+import Navbar from "@/components/shared/navbar/Navbar";
 import React from "react";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -6,11 +8,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <main className="relative background-light850_dark100">
       <Navbar />
       <div className="flex">
-        RightSider
+      <LeftSiderbare />
         <section className="flex min-h-screen flex-col flex-1 px-6 pb-6 pt-36 max-md:pb-14 max-sm:px-14">
           <div className="mx-auto max-w-5xl w-full">{children}</div>
         </section>
-        leftSider
+        <RightSiderbare />
       </div>
     </main>
   );
