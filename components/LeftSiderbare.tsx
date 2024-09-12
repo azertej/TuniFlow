@@ -7,11 +7,12 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import { Button } from "./ui/button";
 import { UserRoundPen } from "lucide-react";
+
 const LeftSiderbare = () => {
   const pathname = usePathname();
   return (
     <section className=" sticky left-0 top-0 h-screen lg:w-[350px] background-light900_dark200 light-border custom-scrollbar overflow-y-auto border-r shadow-light-300 dark:shadow-none pt-32 p-6 max-sm:hidden  ">
-      <div className="flex flex-col gap-y-5">
+      <div className="flex flex-col gap-y-14 ">
         <div className="min-h-full ">
           {sidebarLinks.map((link) => {
             const isActiveUrl =

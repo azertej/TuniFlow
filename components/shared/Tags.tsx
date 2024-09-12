@@ -3,9 +3,9 @@ import React from "react";
 import { Badge } from "../ui/badge";
 
 interface tagProps {
-  _id: number;
+  _id: string;
   tagName: string;
-  totalTgas: number;
+  totalTgas?: number;
   isShowed?: boolean;
 }
 
