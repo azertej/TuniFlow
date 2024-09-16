@@ -7,79 +7,11 @@ import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import React from "react";
 import QuestionCards from "@/components/cards/QuestionCards";
+import { getQuestions } from "@/lib/actions/question.action";
 
-const questions = [
-  {
-    _id: "1",
-    title: "What is the best electric car in 2024?",
-    tags: [
-      { _id: '1', name: "Electric" },
-      { _id: '2', name: "Car" },
-      { _id: '3', name: "2024" },
-    ],
-    auther: {
-      _id: "abc123",
-      name: "John Doe",
-      autherImg: "https://example.com/johndoe.jpg",
-    },
-    votes: 32,
-    views: 256,
-    answers: [],
-    created: new Date("2024-09-01T12:34:00"),
-  },
-  {
-    _id: "2",
-    title: "Is the BMW i4 better than the Tesla Model 3?",
-    tags: [
-      { _id: 4, name: "BMW" },
-      { _id: 5, name: "Tesla" },
-      { _id: 6, name: "Comparison" },
-    ],
-    auther: {
-      _id: "def456",
-      name: "Jane Smith",
-      autherImg: "https://example.com/janesmith.jpg",
-    },
-    votes: 54,
-    views: 1024,
-    answers: [
-      {
-        _id: "uvw123",
-        answer: "Tesla is better for the long run.",
-        votes: 20,
-        accepted: true,
-      },
-    ],
-    created: new Date("2024-09-05T09:12:00"),
-  },
-  {
-    _id: "3",
-    title: "Is the BMW i4 better than the Tesla Model 3?",
-    tags: [
-      { _id: 4, name: "BMW" },
-      { _id: 5, name: "Tesla" },
-      { _id: 6, name: "Comparison" },
-    ],
-    auther: {
-      _id: "def456",
-      name: "Jane Smith",
-      autherImg: "https://example.com/janesmith.jpg",
-    },
-    votes: 54,
-    views: 1024,
-    answers: [
-      {
-        _id: "uvw123",
-        answer: "Tesla is better for the long run.",
-        votes: 20,
-        accepted: true,
-      },
-    ],
-    created: new Date("2024-09-05T09:12:00"),
-  },
-];
-
-const Home = () => {
+const Home = async () => {
+  const result = await getQuestions({})
+  console.log(result.questions) 
   return (
     <div className="flex flex-col">
       <div className="w-full flex sm:flex-row justify-between flex-col-reverse gap-y-4 ">
@@ -106,19 +38,19 @@ const Home = () => {
         />
       </div>
       <HomeFilters />
-      {questions.length > 0 ? (
+      {result.questions.length > 0 ? (
         <div className="flex flex-col gap-y-5 mt-10">
-          {questions.map((question) => (
+          {result.questions.map((question) => (
             <QuestionCards
               key={question._id}
               _id={question._id}
               title={question.title}
               tags={question.tags}
-              auther={question.auther}
+              auther={question.author}
               votes={question.votes}
               views={question.views}
               answers={question.answers}
-              created={question.created}
+              created={question.createdAt}
             />
           ))}
         </div>
