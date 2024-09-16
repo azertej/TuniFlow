@@ -1,6 +1,5 @@
 "use client";
-import React, { useState } from "react";
-import { useRef } from "react";
+import React, { useState,useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -127,7 +126,7 @@ const QuestionsForm = ({ clerkUserId }: props) => {
                 <Editor
                   apiKey={process.env.NEXT_PUBLIC_TINY_API_KEY}
                   onInit={(_evt, editor) => {
-                    //@ts-ignore
+                    // @ts-ignore
                     editorRef.current = editor;
                   }}
                   initialValue=""
