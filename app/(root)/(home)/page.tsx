@@ -11,7 +11,6 @@ import { getQuestions } from "@/lib/actions/question.action";
 
 const Home = async () => {
   const result = await getQuestions({})
-  console.log(result.questions) 
   return (
     <div className="flex flex-col">
       <div className="w-full flex sm:flex-row justify-between flex-col-reverse gap-y-4 ">
