@@ -1,4 +1,5 @@
-import LeftSiderbare from "@/components/leftSiderbare";
+
+import LeftSiderbare from "@/components/LeftSiderbare";
 import RightSiderbare from "@/components/rightSiderbare";
 import Navbar from "@/components/shared/navbar/Navbar";
 import React from "react";

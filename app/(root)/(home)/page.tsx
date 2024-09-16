@@ -1,4 +1,4 @@
-import HomeFilters from "@/components/home/homeFilters";
+import HomeFilters from "@/components/home/HomeFilters";
 import NoResult from "@/components/shared/NoResult";
 import LocalFilter from "@/components/shared/LocalFilter";
 import LocalSearch from "@/components/shared/search/LocalSearch";
