@@ -1,4 +1,4 @@
-import { usePathname } from "next/navigation";
+/* eslint-disable camelcase */
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
@@ -53,7 +53,6 @@ export async function POST(req: Request) {
 
   // Do something with the payload
   // For this guide, you simply log the payload to the console
-  const pathname = usePathname();
   const eventType = evt.type;
   if (eventType === "user.created") {
     const { id, username, first_name, last_name, image_url, email_addresses } =

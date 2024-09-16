@@ -29,6 +29,7 @@ const RightSiderbare = () => {
             {questions.map((question) => {
               return (
                 <Link
+                key={question._id}
                   href={`/question/${question._id}`}
                   className="flex justify-between py-2"
                 >
@@ -56,6 +57,7 @@ const RightSiderbare = () => {
               return (
                 <Tags
                   _id={tag._id}
+                  key={tag._id}
                   tagName={tag.tagName}
                   totalTgas={tag.totalTags}
                   isShowed
