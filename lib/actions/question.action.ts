@@ -4,9 +4,9 @@ import { Tags } from "@/models/tagsModel";
 import { Users } from "@/models/userModel";
 import { revalidatePath } from "next/cache";
 import { connectToDB } from "./../database";
-import { createQuestionProps, getQuestionsProps } from "./shared.props.d";
+import { CreateQuestionParams,  GetQuestionsParams } from "./shared.props.d";
 
-export const getQuestions = async (params: getQuestionsProps) => {
+export const getQuestions = async (params: GetQuestionsParams) => {
   try {
     connectToDB();
     const questions = await Questions.find({})
@@ -15,10 +15,13 @@ export const getQuestions = async (params: getQuestionsProps) => {
       .sort({ createdAt: -1 });
 
     return { questions };
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+    throw (error)
+  }
 };
 
-export const createQuestion = async (params: createQuestionProps) => {
+export const createQuestion = async (params: CreateQuestionParams) => {
   try {
     connectToDB();
 
@@ -46,5 +49,7 @@ export const createQuestion = async (params: createQuestionProps) => {
       $push: { tags: { $each: tagsDocuments } },
     });
     revalidatePath(path);
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+  }
 };
