@@ -5,10 +5,10 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 const AskQuestion = async () => {
-  const {userId} = auth();
-  if (!userId) redirect('/sign-in')
-  const mongoUser = await findUserById({userId})
-
+  const { userId } = auth();
+  console.log(userId);
+  if (!userId) redirect("/sign-in");
+  const mongoUser = await findUserById({ userId });
   return (
     <div className="flex flex-col gap-y-5">
       <span className="text-3xl font-bold text-dark100_light900">
