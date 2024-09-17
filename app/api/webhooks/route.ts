@@ -3,19 +3,14 @@ import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { createUser, deleteUser, updateUser } from "@/lib/actions/user.action";
 import { NextResponse } from "next/server";
-import { buffer } from "micro";
-
-export const config = {
-  api: {
-    bodyParser: false, // Disable body parsing
-  },
-};
 
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.NEXT_CLERK_WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
-    throw new Error("Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local");
+    throw new Error(
+      "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
+    );
   }
 
   // Get the headers
@@ -25,22 +20,19 @@ export async function POST(req: Request) {
   const svix_signature = headerPayload.get("svix-signature");
 
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response("Error occurred -- no svix headers", {
-      status: 400,
-    });
+    return new Response("Error occurred -- no svix headers", { status: 400 });
   }
 
-  // Parse the raw body
-  const rawBody = await buffer(req);
-  
-  // Create a new Svix instance with your secret.
+  // Get the raw body as a readable stream and convert it to text
+  const body = await req.text();
+
+  // Create a new Svix instance with your secret
   const wh = new Webhook(WEBHOOK_SECRET);
 
   let evt: WebhookEvent;
 
-  // Verify the raw body with the headers
   try {
-    evt = wh.verify(rawBody.toString(), {
+    evt = wh.verify(body, {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
@@ -50,15 +42,14 @@ export async function POST(req: Request) {
     return new Response("Error occurred", { status: 400 });
   }
 
-  // Proceed with event handling (same logic as before)
+  // Handle the event based on its type
   const eventType = evt?.type;
-  console.log({ eventType });
-
   if (eventType === "user.created") {
-    const { id, username, first_name, last_name, image_url, email_addresses } = evt.data;
+    const { id, username, first_name, last_name, image_url, email_addresses } =
+      evt.data;
     const mongoUser = await createUser({
       clerkId: id,
-      name: `${first_name} ${last_name ? `${last_name}` : ""}`,
+      name: `${first_name} ${last_name ? last_name : ""}`,
       userName: username!,
       email: email_addresses[0].email_address,
       userPic: image_url,
@@ -67,11 +58,12 @@ export async function POST(req: Request) {
   }
 
   if (eventType === "user.updated") {
-    const { id, username, first_name, last_name, image_url, email_addresses } = evt.data;
+    const { id, username, first_name, last_name, image_url, email_addresses } =
+      evt.data;
     const updatedMongoUser = await updateUser({
       clerkId: id,
       updatedData: {
-        name: `${first_name} ${last_name ? `${last_name}` : ""}`,
+        name: `${first_name} ${last_name ? last_name : ""}`,
         userName: username!,
         email: email_addresses[0].email_address,
         userPic: image_url,
@@ -83,9 +75,7 @@ export async function POST(req: Request) {
 
   if (eventType === "user.deleted") {
     const { id } = evt.data;
-    const deleteMongoUser = await deleteUser({
-      clerkId: id!,
-    });
+    const deleteMongoUser = await deleteUser({ clerkId: id! });
     return NextResponse.json({ message: "Ok", user: deleteMongoUser });
   }
 
