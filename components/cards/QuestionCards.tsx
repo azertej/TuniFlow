@@ -14,7 +14,7 @@ interface questionCardsProps {
   auther: {
     _id: string;
     name: string;
-    autherImg: string;
+    userPic: string;
   };
   votes: number;
   views: number;
@@ -58,11 +58,11 @@ const QuestionCards = ({
       </div>
       <div className="flex justify-between max-md:flex-col max-md:gap-y-3 ">
         <Metric
-          icon=""
-          href={`profil/${auther._id}`}
+          icon={auther?.userPic}
+          href={`profil/${auther?._id}`}
           auther
           alt="likeIcon"
-          value={auther.name}
+          value={auther?.name}
           title={` - asked ${convertTime(created)}`}
           extraClass="text-dark400_light800"
         />
