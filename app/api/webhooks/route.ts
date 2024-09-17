@@ -50,21 +50,21 @@ export async function POST(req: Request) {
       evt.data;
     const mongoUser = await createUser({
       clerkId: id,
-      name: `${first_name} ${last_name ? last_name : ""}`,
+      name: `${first_name} ${last_name || ""}`,  // Simplified
       userName: username!,
       email: email_addresses[0].email_address,
       userPic: image_url,
     });
     return NextResponse.json({ message: "Ok", user: mongoUser });
   }
-
+  
   if (eventType === "user.updated") {
     const { id, username, first_name, last_name, image_url, email_addresses } =
       evt.data;
     const updatedMongoUser = await updateUser({
       clerkId: id,
       updatedData: {
-        name: `${first_name} ${last_name ? last_name : ""}`,
+        name: `${first_name} ${last_name || ""}`,  // Simplified
         userName: username!,
         email: email_addresses[0].email_address,
         userPic: image_url,
