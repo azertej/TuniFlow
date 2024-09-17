@@ -9,9 +9,7 @@ export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.NEXT_CLERK_WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
-    throw new Error(
-      "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
-    );
+    throw new Error("Please add WEBHOOK_SECRET from Clerk Dashboard to .env");
   }
 
   // Get the headers
@@ -21,17 +19,17 @@ export async function POST(req: Request) {
   const svix_signature = headerPayload.get("svix-signature");
 
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response("Error occurred -- no svix headers", { status: 400 });
+    return new Response("Missing svix headers", { status: 400 });
   }
 
-  // Get the raw body as a readable stream and convert it to text
-  const body = await req.text();
+  const payload = await req.json();
+  const body = JSON.stringify(payload);
 
-  // Create a new Svix instance with your secret
   const wh = new Webhook(WEBHOOK_SECRET);
 
   let evt: WebhookEvent;
 
+  // Verify the payload with the headers
   try {
     evt = wh.verify(body, {
       "svix-id": svix_id,
@@ -40,45 +38,61 @@ export async function POST(req: Request) {
     }) as WebhookEvent;
   } catch (err) {
     console.error("Error verifying webhook:", err);
-    return new Response("Error occurred", { status: 400 });
+    return new Response("Error verifying webhook", { status: 400 });
   }
 
-  // Handle the event based on its type
-  const eventType = evt?.type;
-  if (eventType === "user.created") {
-    const { id, username, first_name, last_name, image_url, email_addresses } =
-      evt.data;
-    const mongoUser = await createUser({
-      clerkId: id,
-      name: `${first_name} ${last_name || ""}`,  // Simplified
-      userName: username!,
-      email: email_addresses[0].email_address,
-      userPic: image_url,
-    });
-    return NextResponse.json({ message: "Ok", user: mongoUser });
+  // Log event data for debugging
+  console.log("Event Data:", evt.data);
+
+  const { id, username, first_name, last_name, image_url, email_addresses } = evt.data;
+
+  if (!id || !username || !first_name || !email_addresses || email_addresses.length === 0) {
+    return new Response("Missing required fields", { status: 400 });
   }
-  
+
+  const name = `${first_name} ${last_name || ""}`;
+  const email = email_addresses[0].email_address;
+  const userPic = image_url || "https://example.com/default-user-pic.jpg"; // Fallback for missing image
+
+  if (eventType === "user.created") {
+    try {
+      const mongoUser = await createUser({
+        clerkId: id,
+        name,
+        userName: username,
+        email,
+        userPic,
+      });
+      return NextResponse.json({ message: "User created", user: mongoUser });
+    } catch (error) {
+      console.error("Error creating user:", error);
+      return new Response("Error creating user", { status: 500 });
+    }
+  }
+
   if (eventType === "user.updated") {
-    const { id, username, first_name, last_name, image_url, email_addresses } =
-      evt.data;
-    const updatedMongoUser = await updateUser({
-      clerkId: id,
-      updatedData: {
-        name: `${first_name} ${last_name || ""}`,  // Simplified
-        userName: username!,
-        email: email_addresses[0].email_address,
-        userPic: image_url,
-      },
-      path: `/profile/${id}`,
-    });
-    return NextResponse.json({ message: "Ok", user: updatedMongoUser });
+    try {
+      const updatedMongoUser = await updateUser({
+        clerkId: id,
+        updatedData: { name, userName: username, email, userPic },
+        path: `/profile/${id}`,
+      });
+      return NextResponse.json({ message: "User updated", user: updatedMongoUser });
+    } catch (error) {
+      console.error("Error updating user:", error);
+      return new Response("Error updating user", { status: 500 });
+    }
   }
 
   if (eventType === "user.deleted") {
-    const { id } = evt.data;
-    const deleteMongoUser = await deleteUser({ clerkId: id! });
-    return NextResponse.json({ message: "Ok", user: deleteMongoUser });
+    try {
+      const deleteMongoUser = await deleteUser({ clerkId: id });
+      return NextResponse.json({ message: "User deleted", user: deleteMongoUser });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      return new Response("Error deleting user", { status: 500 });
+    }
   }
 
-  return new Response("", { status: 200 });
+  return new Response("Unhandled event type", { status: 400 });
 }
