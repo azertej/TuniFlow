@@ -41,7 +41,6 @@ export async function POST(req: Request) {
     return new Response("Error verifying webhook", { status: 400 });
   }
 
-  // Log event data for debugging
   console.log("Event Data:", evt.data);
 
   const { id, username, first_name, last_name, image_url, email_addresses } = evt.data;
@@ -52,8 +51,9 @@ export async function POST(req: Request) {
 
   const name = `${first_name} ${last_name || ""}`;
   const email = email_addresses[0].email_address;
-  const userPic = image_url || "https://example.com/default-user-pic.jpg"; // Fallback for missing image
-
+  const userPic = image_url || "https://example.com/default-user-pic.jpg"
+  
+  const eventType = evt.type
   if (eventType === "user.created") {
     try {
       const mongoUser = await createUser({
