@@ -46,9 +46,10 @@ export async function POST(req: Request) {
   // Handle the event based on its type
   const eventType = evt.type;
   console.log(eventType);
+  
   if (eventType === "user.created") {
     const { id, username, first_name, last_name, image_url, email_addresses } =
-      evt.data;
+      evt.data
     if (
       !id ||
       !username ||
@@ -71,7 +72,7 @@ export async function POST(req: Request) {
   if (eventType === "user.updated") {
     const { id, username, first_name, last_name, image_url, email_addresses } =
       evt.data;
-    if (
+      if (
       !id ||
       !username ||
       !first_name ||

@@ -13,8 +13,8 @@ import {
 
 export const createUser = async (params: CreateUserParams) => {
   try {
-    connectToDB();
-    const newUser = await Users.create({ params });
+    await connectToDB();
+    const newUser = await Users.create(params);
     return newUser;
   } catch (error) {
     console.log(error);
@@ -24,7 +24,7 @@ export const createUser = async (params: CreateUserParams) => {
 
 export const updateUser = async (params: UpdateUserParams) => {
   try {
-    connectToDB();
+    await connectToDB();
     const { clerkId, updatedData, path } = params;
     await Users.findOneAndUpdate({ clerkId }, updatedData, { new: true });
     revalidatePath(path);
@@ -36,7 +36,7 @@ export const updateUser = async (params: UpdateUserParams) => {
 
 export const deleteUser = async (params: DeleteUserParams) => {
   try {
-    connectToDB();
+    await connectToDB();
     const { clerkId } = params;
     const user = await Users.findOneAndDelete({ clerkId });
     await Questions.deleteMany({ author: user._id });
