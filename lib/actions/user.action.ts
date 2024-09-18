@@ -1,12 +1,14 @@
 "use server";
 
 import { Questions } from "@/models/questionModel";
+import { Tags } from "@/models/tagsModel";
 import { Users } from "@/models/userModel";
 import { revalidatePath } from "next/cache";
 import { connectToDB } from "./../database";
 import {
   CreateUserParams,
   DeleteUserParams,
+  GetAllUsersParams,
   GetUserByIdParams,
   UpdateUserParams,
 } from "./shared.props";
@@ -60,5 +62,16 @@ export const findUserById = async (params: GetUserByIdParams) => {
   } catch (error) {
     console.log(error);
     throw error;
+  }
+};
+
+export const getUsers = async (params: GetAllUsersParams) => {
+  try {
+    connectToDB();
+    const users = await Users.find({}).sort({ createdAt: -1 }) 
+    return { users }
+  } catch (error) {
+    console.log(error)
+    throw (error)
   }
 };

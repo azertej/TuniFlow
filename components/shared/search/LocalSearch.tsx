@@ -4,7 +4,7 @@ import Image from "next/image";
 import React from "react";
 
 interface LocalSearchProps {
-  route: string;
+  route?: string;
   placeholder: string;
   iconPosition: string;
   iconImage: string;
@@ -24,7 +24,7 @@ const LocalSearch = ({
           width={20}
           height={20}
           alt="searchIcon"
-          className="mx-2"
+          className="mx-2 cursor-pointer"
         />
       )}
       <Input
@@ -39,7 +39,7 @@ const LocalSearch = ({
           width={20}
           height={20}
           alt="searchIcon"
-          className="mx-2"
+          className="mx-2 cursor-pointer"
         />
       )}
     </div>

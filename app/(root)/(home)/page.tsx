@@ -12,7 +12,7 @@ import { getQuestions } from "@/lib/actions/question.action";
 const Home = async () => {
   const result = await getQuestions({})
   return (
-    <div className="flex flex-col">
+    <section className="flex flex-col">
       <div className="w-full flex sm:flex-row justify-between flex-col-reverse gap-y-4 ">
         <span className="font-bold text-3xl text-dark100_light900 ">
           All Questions
@@ -60,7 +60,7 @@ const Home = async () => {
           buttonTitle="Ask a Question"
         />
       )}
-    </div>
+    </section>
   );
 };
 

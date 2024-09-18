@@ -15,7 +15,7 @@ interface localFilterProps {
     value: string;
   }[];
   otherClass: string;
-  countainerClass: string;
+  countainerClass?: string;
 }
 
 const LocalFilter = ({

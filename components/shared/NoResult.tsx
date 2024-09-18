@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 interface noResultProps {
   title: string;
   description: string;
-  buttonTitle: string;
+  buttonTitle?: string;
 }
 
 const NoResult = ({ title, description, buttonTitle }: noResultProps) => {

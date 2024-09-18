@@ -24,13 +24,13 @@ const Metric = ({
   return (
     <div>
       {href ? (
-        <div className="flex gap-x- items-center">
+        <div className="flex gap-x-2 items-center">
           <Link href={href}>
             <Image
               src={icon}
               alt={alt}
-              width={15}
-              height={15}
+              width={20}
+              height={20}
               className={`object-contain ${auther ? "rounded-full font-semi-bold cursor-pointer" : ""}`}
             />
           </Link>
