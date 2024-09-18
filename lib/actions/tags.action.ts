@@ -23,7 +23,7 @@ export const popularUserTags = async (params: GetTopInteractedTagsParams) => {
     throw error;
   }
 };
-export const getTags = async (params: GetAllTagsParams) => {
+export const allTags = async (params: GetAllTagsParams) => {
   try {
     await connectToDB();
     const tags = await Tags.find({}).sort({ createdAt: -1 });

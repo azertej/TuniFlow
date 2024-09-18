@@ -17,7 +17,7 @@ const UserCards = async ({ user }: userProps) => {
   const userTags = await popularUserTags({ userId: user._id });
   return (
     <Link
-      href={`/profile/${user._id}`}
+      href={`/profile/${user.clerkId}`}
       className="shadow-light100_darknone w-60 h-60 "
     >
       <div className="bg-slate-100 dark:bg-slate-900 border light-border flex flex-col justify-center items-center gap-y-3 p-8 rounded-2xl">
