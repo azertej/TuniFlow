@@ -12,8 +12,11 @@ interface userProps {
   userName: string;
   userPic: string;
 }
+interface UserCardsProps {
+  user: userProps;
+}
 
-const UserCards = async ({ user }: userProps) => {
+const UserCards = async ({ user }: UserCardsProps) => {
   const userTags = await popularUserTags({ userId: user._id });
   return (
     <Link

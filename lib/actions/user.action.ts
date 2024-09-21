@@ -1,7 +1,6 @@
 "use server";
 
 import { Questions } from "@/models/questionModel";
-import { Tags } from "@/models/tagsModel";
 import { Users } from "@/models/userModel";
 import { revalidatePath } from "next/cache";
 import { connectToDB } from "./../database";

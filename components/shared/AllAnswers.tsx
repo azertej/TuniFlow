@@ -55,7 +55,7 @@ const AllAnswers = async ({
                 </div>
               </Link>
               <div className="text-dark300_light700 flex justify-end">
-                <Votes />
+                <span></span>
               </div>
             </div>
             <InerrHTML data={answer.content} />

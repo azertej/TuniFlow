@@ -1,6 +1,11 @@
 import React from 'react'
 
-const Votes = () => {
+interface votesProps {
+  type:string,
+  currentUser:string,
+  questionRef:string
+}
+const Votes = ({type,currentUser,questionRef}:votesProps) => {
   return (
     <div>Votes</div>
   )

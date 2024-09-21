@@ -4,7 +4,7 @@ import { connectToDB } from "./../database";
 import { Answers } from "@/models/answerModel";
 import { revalidatePath } from "next/cache";
 import { Questions } from "@/models/questionModel";
-import { Users } from "@/models/userModel";
+
 
 export const createAnswer = async (params: CreateAnswerParams) => {
   try {
