@@ -42,6 +42,7 @@ const questionSchema = new Schema({
   }],
   views: {
     type: Number,
+    default:0
   },
   createdAt: {
     type: Date,

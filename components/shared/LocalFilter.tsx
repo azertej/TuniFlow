@@ -14,7 +14,7 @@ interface localFilterProps {
     name: string;
     value: string;
   }[];
-  otherClass: string;
+  otherClass?: string;
   countainerClass?: string;
 }
 

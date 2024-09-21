@@ -20,11 +20,13 @@ import { Badge } from "../ui/badge";
 import Image from "next/image";
 import { createQuestion } from "@/lib/actions/question.action";
 import { usePathname, useRouter } from "next/navigation";
+import { useTheme } from "@/context/themeProvider";
 
 interface props {
   clerkUserId: string;
 }
 const QuestionsForm = ({ clerkUserId }: props) => {
+  const {mode} = useTheme()
   const router = useRouter();
   const pathname = usePathname();
   const buttonType: any = "create";
@@ -157,6 +159,8 @@ const QuestionsForm = ({ clerkUserId }: props) => {
                       "codesample | bold italic forecolor | alignright alignjustify alignleft aligncenter " +
                       " bullist numlist ",
                     content_style: "body { font-family:Inter; font-size:16px }",
+                    skin: mode === 'dark' ? 'oxide-dark':'oxide',
+                    content_css: mode === 'dark' ? 'dark':'light'
                   }}
                 />
               </FormControl>

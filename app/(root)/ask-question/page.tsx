@@ -9,7 +9,6 @@ const AskQuestion = async () => {
   console.log(userId);
   if (!userId) redirect("/sign-in");
   const mongoUser = await findUserById({ userId });
-  console.log(mongoUser)
   return (
     <div className="flex flex-col gap-y-5">
       <span className="text-3xl font-bold text-dark100_light900">

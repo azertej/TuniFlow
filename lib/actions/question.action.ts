@@ -4,7 +4,11 @@ import { Tags } from "@/models/tagsModel";
 import { Users } from "@/models/userModel";
 import { revalidatePath } from "next/cache";
 import { connectToDB } from "./../database";
-import { CreateQuestionParams,  GetQuestionsParams } from "./shared.props.d";
+import {
+  CreateQuestionParams,
+  GetQuestionsParams,
+  GetQuestionByIdParams,
+} from "./shared.props.d";
 
 export const getQuestions = async (params: GetQuestionsParams) => {
   try {
@@ -16,8 +20,8 @@ export const getQuestions = async (params: GetQuestionsParams) => {
 
     return { questions };
   } catch (error) {
-    console.log(error)
-    throw (error)
+    console.log(error);
+    throw error;
   }
 };
 
@@ -50,6 +54,20 @@ export const createQuestion = async (params: CreateQuestionParams) => {
     });
     revalidatePath(path);
   } catch (error) {
-    console.log(error)
+    console.log(error);
+  }
+};
+
+export const getQuestionById = async (params: GetQuestionByIdParams) => {
+  try {
+    await connectToDB();
+    const { questionId } = params;
+    const question = await Questions.findById(questionId)
+      .populate({ path: "author", model: Users })
+      .populate({ path: "tags", model: Tags });
+    return question;
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 };
