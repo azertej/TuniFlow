@@ -58,11 +58,11 @@ const AnswersForm = ({ questionId, authorId }: answerProps) => {
 
   return (
     <div>
-      <div className="flex flex-col-reverse justify-between sm:flex-row sm:items-center my-4">
-        <span className="paragraph-semibold text-dark400_light800">
+      <div className="flex flex-col-reverse gap-y-4 justify-between sm:flex-row sm:items-center my-4">
+        <span className="paragraph-semibold text-dark400_light800 flex justify-start">
           You can answer here
         </span>
-        <Button className=" text-primary-500 dark:text-primary-500 p-3 flex gap-x-2 dark:bg-slate-800">
+        <Button className=" text-primary-500 dark:text-primary-500 p-3 flex gap-x-2 dark:bg-slate-800 max-sm:w-40 max-sm:justify-end">
           <span className="text-primary-500 dark:text-primary-500 ">
             Answer with AI
           </span>
@@ -92,7 +92,7 @@ const AnswersForm = ({ questionId, authorId }: answerProps) => {
                     onBlur={field.onBlur}
                     onEditorChange={(content) => field.onChange(content)}
                     init={{
-                      height: 500,
+                      height: 350,
                       menubar: false,
                       plugins: [
                         "advlist",

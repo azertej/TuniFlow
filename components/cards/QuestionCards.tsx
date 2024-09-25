@@ -16,7 +16,7 @@ interface questionCardsProps {
     name: string;
     userPic: string;
   };
-  votes: number;
+  votes: string[];
   views: number;
   answers: {
     _id: string;
@@ -38,7 +38,7 @@ const QuestionCards = ({
 }: questionCardsProps) => {
   return (
     <div
-      className="card-wrapper rounded-lg p-5 flex flex-col gap-y-5"
+      className="card-wrapper rounded-lg p-5 flex flex-col gap-y-5 "
       key={_id}
     >
       <div className="flex flex-col gap-y-2">
@@ -70,7 +70,7 @@ const QuestionCards = ({
           <Metric
             icon="/assets/icons/like.svg"
             alt="likeIcon"
-            value={votes}
+            value={votes.length}
             title="Votes"
             extraClass="small-medium text-dark400_light800"
           />

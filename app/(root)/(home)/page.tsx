@@ -46,7 +46,7 @@ const Home = async () => {
               title={question.title}
               tags={question.tags}
               auther={question.author}
-              votes={question.votes}
+              votes={question.upVotes}
               views={question.views}
               answers={question.answers}
               created={question.createdAt}

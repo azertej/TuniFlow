@@ -20,8 +20,8 @@ const QuestionPage = async ({ params }: { params: { questionId: string } }) => {
   const mongoUser = await findUserById({ userId });
   return (
     <>
-      <div className="flex w-full flex-col">
-        <div className="w-full flex flex-col-reverse justify-between gap-3 sm:flex-row sm:items-center ">
+      <div className="flex-start w-full flex-col">
+        <div className="flex w-full flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2 ">
           <Link
             href={`/profile/${question.author.clerkId}`}
             className="flex items-center justify-start gap-x-2"
@@ -42,14 +42,19 @@ const QuestionPage = async ({ params }: { params: { questionId: string } }) => {
               type="question"
               currentUser={mongoUser._id}
               questionRef={question._id}
+              upvotes={question.upVotes.length}
+              hasUpvoted={question.upVotes.includes(mongoUser._id)}
+              downVotes={question.downVotes.length}
+              hasDownvoted={question.downVotes.includes(mongoUser._id)}
+              hasSaved={mongoUser.savedPosts.includes(question._id)}
             />
           </div>
         </div>
-        <span className="font-bold text-dark200_light900 w-full mt-4 text-lg ">
+        <span className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left ">
           {question.title}{" "}
         </span>
       </div>
-      <div className="flex gap-x-5 mt-2 mb-10">
+      <div className="mb-8 mt-5 flex flex-wrap gap-4">
         <Metric
           icon="/assets/icons/clock.svg"
           alt="likeIcon"
