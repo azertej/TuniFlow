@@ -1,13 +1,14 @@
 "use client";
 import { answerDownVote, answerUpVote } from "@/lib/actions/answer.action";
+import { viewQuestionAction } from "@/lib/actions/interaction.action";
 import {
   downvoteQuestion,
   upvoteQuestion,
 } from "@/lib/actions/question.action";
 import { savedPost } from "@/lib/actions/user.action";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import React from "react";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
 interface votesProps {
   type: string;
@@ -30,6 +31,14 @@ const Votes = ({
   hasSaved,
 }: votesProps) => {
   const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    viewQuestionAction({
+      userId: currentUser ? currentUser : undefined,
+      questionId: questionRef,
+    });
+  }, [currentUser, questionRef, pathname, router]);
 
   const handleSave = async () => {
     await savedPost({

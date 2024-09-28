@@ -29,3 +29,13 @@ export const convertTime = (created: Date): string => {
   
   return 'just now';
 };
+
+export function formatMonthYear(date: any): string {
+  const parsedDate = new Date(date);
+  if (!(parsedDate instanceof Date) || isNaN(parsedDate.getTime())) {
+    throw new Error('Invalid date input');
+  }
+
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long' };
+  return parsedDate.toLocaleDateString('en-US', options);
+}

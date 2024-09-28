@@ -25,8 +25,10 @@ interface questionCardsProps {
     accepted: boolean;
   }[];
   created: Date;
+  clerkId?:string
 }
 const QuestionCards = ({
+  clerkId,
   _id,
   title,
   tags,
@@ -59,7 +61,7 @@ const QuestionCards = ({
       <div className="flex justify-between max-md:flex-col max-md:gap-y-3 ">
         <Metric
           icon={auther?.userPic}
-          href={`profil/${auther?._id}`}
+          href={`profile/${auther?._id}`}
           auther
           alt="likeIcon"
           value={auther?.name}

@@ -1,7 +1,13 @@
+"use server";
+import { Questions } from "@/models/questionModel";
 import { Tags } from "@/models/tagsModel";
 import { Users } from "@/models/userModel";
 import { connectToDB } from "../database";
-import { GetAllTagsParams, GetTopInteractedTagsParams } from "./shared.props";
+import {
+  GetAllTagsParams,
+  GetQuestionsByTagIdParams,
+  GetTopInteractedTagsParams,
+} from "./shared.props";
 
 export const popularUserTags = async (params: GetTopInteractedTagsParams) => {
   try {
@@ -28,6 +34,28 @@ export const allTags = async (params: GetAllTagsParams) => {
     await connectToDB();
     const tags = await Tags.find({}).sort({ createdAt: -1 });
     return { tags };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getTagByID = async (params: GetQuestionsByTagIdParams) => {
+  try {
+    await connectToDB();
+    const { tagId, page, pageSize, searchQuery } = params;
+    const tag = await Tags.findById(tagId).populate({
+      path: "questionRef",
+      populate: [
+        { path: "tags", model: Tags },
+        { path: "author", model: Users },
+      ],
+      options: {
+        sort: { createdAt: -1 },
+      },
+    });
+    const Relatedquestions = tag.questionRef;
+    return { questions: Relatedquestions, tagName: tag.name };
   } catch (error) {
     console.log(error);
     throw error;

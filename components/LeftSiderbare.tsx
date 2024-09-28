@@ -1,6 +1,6 @@
 "use client";
 import { sidebarLinks } from "@/constants/index";
-import { SignedOut } from "@clerk/nextjs";
+import { SignedOut, useAuth } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -10,6 +10,7 @@ import { UserRoundPen } from "lucide-react";
 
 const LeftSiderbare = () => {
   const pathname = usePathname();
+  const { userId } = useAuth();
   return (
     <section className=" sticky left-0 top-0 h-screen lg:w-[350px] background-light900_dark200 light-border custom-scrollbar overflow-y-auto border-r shadow-light-300 dark:shadow-none pt-32 p-6 max-sm:hidden  ">
       <div className="flex flex-col gap-y-14 ">
@@ -18,6 +19,13 @@ const LeftSiderbare = () => {
             const isActiveUrl =
               (pathname.includes(link.route) && link.route.length > 1) ||
               pathname === link.route;
+            if (link.route === "/profile") {
+              if (userId) {
+                link.route = `${link.route}/${userId}`;
+              } else {
+                return null;
+              }
+            }
             return (
               <div key={link.label}>
                 <Link

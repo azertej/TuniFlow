@@ -27,7 +27,7 @@ const Community = async () => {
       </div>
       <section className="flex justify-center">
         {questions.questions.length > 0 ? (
-          <div className="flex flex-col gap-y-5 mt-10 w-full">
+          <div className="flex flex-col gap-y-5 mt-10 ">
             {questions.questions.map((question: any) => (
               <QuestionCards
                 key={question._id}
