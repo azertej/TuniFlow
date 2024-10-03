@@ -38,10 +38,17 @@ const Profile = async ({ params, searchParams }: URLProps) => {
             <div className="mt-1 flex flex-col max-lg:flex-row flex-wrap mb-3 ">
               <div className="flex items-start gap-x-5 my-2">
                 {userInfos.user.location && (
-                  <ProfileInfo img="/assets/icons/location.svg" title="&&&&&" />
+                  <ProfileInfo
+                    img="/assets/icons/location.svg"
+                    title={userInfos.user.location}
+                  />
                 )}
                 {userInfos.user.portfolioWebsite && (
-                  <ProfileInfo img="/assets/icons/location.svg" title="aaaa" />
+                  <ProfileInfo
+                    img="/assets/icons/link.svg"
+                    title={userInfos.user.portfolioWebsite}
+                    href={userInfos.user.portfolioWebsite}
+                  />
                 )}
               </div>
               <ProfileInfo
@@ -59,7 +66,7 @@ const Profile = async ({ params, searchParams }: URLProps) => {
         <div className="flex justify-end max-sm:w-full">
           <SignedIn>
             {clerkId === userInfos.user.clerkId && (
-              <Link href="/profile/edit">
+              <Link href={`edit/${clerkId}`}>
                 <Button className="btn-secondary text-dark300_light700 min-h-[40px] min-w-[170px] ">
                   Edit Profile
                 </Button>
@@ -85,14 +92,15 @@ const Profile = async ({ params, searchParams }: URLProps) => {
           <TabsContent value="top-posts">
             <QuestionTab
               userId={userInfos.user._id}
-              clerkId={clerkId?.toString()}
+              clerkId={clerkId ?? undefined}
               searchParams={searchParams}
             />
           </TabsContent>
           <TabsContent value="answers">
             <AnswerTab
               userId={userInfos.user._id}
-              clerkId={clerkId}
+              userClerkId={userInfos.user.clerkId}
+              clerkId={clerkId ?? undefined}
               searchParams={searchParams}
             />
           </TabsContent>

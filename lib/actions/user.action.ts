@@ -1,5 +1,5 @@
 "use server";
-import { GetUserStatsParams } from "./shared.props.d";
+
 import { Answers } from "@/models/answerModel";
 import { Questions } from "@/models/questionModel";
 import { Tags } from "@/models/tagsModel";
@@ -8,6 +8,7 @@ import { FilterQuery } from "mongoose";
 import { revalidatePath } from "next/cache";
 import { connectToDB } from "./../database";
 import {
+  GetUserStatsParams,
   CreateUserParams,
   DeleteUserParams,
   GetAllUsersParams,
@@ -114,7 +115,7 @@ export const savedPost = async (params: ToggleSaveQuestionParams) => {
 export const getAllSavedQuestions = async (params: GetSavedQuestionsParams) => {
   try {
     await connectToDB();
-    const { clerkId, page, pageSize, filter, searchQuery } = params;
+    const { clerkId,  searchQuery } = params;
     const query: FilterQuery<typeof Questions> = searchQuery
       ? { title: { $regex: new RegExp(searchQuery, "i") } }
       : {};
@@ -196,10 +197,12 @@ export const userAnswers = async (params: GetUserStatsParams) => {
       .populate({ path: "answerAuthor", model: Users });
     return {
       totalAnswers,
-      answers:userAnswers
-    }
+      answers: userAnswers,
+    };
   } catch (error) {
     console.log(error);
     throw error;
   }
 };
+
+

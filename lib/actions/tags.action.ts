@@ -1,5 +1,5 @@
 "use server";
-import { Questions } from "@/models/questionModel";
+
 import { Tags } from "@/models/tagsModel";
 import { Users } from "@/models/userModel";
 import { connectToDB } from "../database";
@@ -43,7 +43,7 @@ export const allTags = async (params: GetAllTagsParams) => {
 export const getTagByID = async (params: GetQuestionsByTagIdParams) => {
   try {
     await connectToDB();
-    const { tagId, page, pageSize, searchQuery } = params;
+    const { tagId } = params;
     const tag = await Tags.findById(tagId).populate({
       path: "questionRef",
       populate: [
@@ -59,5 +59,20 @@ export const getTagByID = async (params: GetQuestionsByTagIdParams) => {
   } catch (error) {
     console.log(error);
     throw error;
+  }
+};
+
+export const topTags = async () => {
+  try {
+    await connectToDB()
+    const tags = await Tags.aggregate([
+      {$project:{name:1,numberOfQuestions:{$size:"$questionRef"}}},
+      {$sort:{numberOfQuestions:-1}},
+      {$limit:5}
+    ])
+    return tags
+  } catch (error) {
+    console.log(error)
+    throw(error)
   }
 };

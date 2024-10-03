@@ -1,5 +1,5 @@
 "use client";
-import React, { useState,useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,27 +18,37 @@ import { z } from "zod";
 import { questionFormSchema } from "@/lib/validation";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, updateQuestion } from "@/lib/actions/question.action";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "@/context/themeProvider";
 
 interface props {
   clerkUserId: string;
+  questionInfos?: string;
+  buttonType?: string;
 }
-const QuestionsForm = ({ clerkUserId }: props) => {
-  const {mode} = useTheme()
+
+const QuestionsForm = ({ clerkUserId, questionInfos, buttonType }: props) => {
+  let questionDetails: any;
+  try {
+    questionDetails = JSON.parse(questionInfos || "");
+  } catch (error) {
+    console.error("Failed to parse questionInfos:", error);
+    questionDetails = "";
+  }
+  const existingTags = questionDetails.tags?.map((tag: any) => tag.name) || [];
+  const { mode } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
-  const buttonType: any = "create";
   const [submitting, setSubmitting] = useState(false);
   const editorRef = useRef(null);
 
   const form = useForm<z.infer<typeof questionFormSchema>>({
     resolver: zodResolver(questionFormSchema),
     defaultValues: {
-      title: "",
-      explanation: "",
-      tags: [],
+      title: questionDetails.title || "",
+      explanation: questionDetails.explanation || "",
+      tags: existingTags || [],
     },
   });
 
@@ -67,7 +77,7 @@ const QuestionsForm = ({ clerkUserId }: props) => {
       }
     }
   };
-  
+
   const handleDeleteTag = (tag: string, field: any) => {
     const newTags = field.value.filter((t: string) => t !== tag);
     form.setValue("tags", newTags);
@@ -75,16 +85,26 @@ const QuestionsForm = ({ clerkUserId }: props) => {
 
   async function onSubmit(values: z.infer<typeof questionFormSchema>) {
     setSubmitting(true);
+    console.log(questionDetails._id);
     try {
-      console.log(values);
-      await createQuestion({
-        title: values.title,
-        explanation: values.explanation,
-        tags: values.tags,
-        author: JSON.parse(clerkUserId),
-        path:pathname
-      });
-      router.push("/");
+      if (buttonType === "edit") {
+        await updateQuestion({
+          questionId: questionDetails._id,
+          title: values.title,
+          explanation: values.explanation,
+          path: pathname,
+        });
+        router.push(`/question/${questionDetails._id}`);
+      } else {
+        await createQuestion({
+          title: values.title,
+          explanation: values.explanation,
+          tags: values.tags,
+          author: JSON.parse(clerkUserId),
+          path: pathname,
+        });
+        router.push("/");
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -131,7 +151,7 @@ const QuestionsForm = ({ clerkUserId }: props) => {
                     // @ts-ignore
                     editorRef.current = editor;
                   }}
-                  initialValue=""
+                  initialValue={questionDetails.explanation}
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
                   init={{
@@ -159,8 +179,8 @@ const QuestionsForm = ({ clerkUserId }: props) => {
                       "codesample | bold italic forecolor | alignright alignjustify alignleft aligncenter " +
                       " bullist numlist ",
                     content_style: "body { font-family:Inter; font-size:16px }",
-                    skin: mode === 'dark' ? 'oxide-dark':'oxide',
-                    content_css: mode === 'dark' ? 'dark':'light'
+                    skin: mode === "dark" ? "oxide-dark" : "oxide",
+                    content_css: mode === "dark" ? "dark" : "light",
                   }}
                 />
               </FormControl>
@@ -183,6 +203,7 @@ const QuestionsForm = ({ clerkUserId }: props) => {
               <FormControl>
                 <div className="flex flex-col gap-y-3 ">
                   <Input
+                    disabled={buttonType === "edit"}
                     placeholder="Tags ..."
                     className="no-focus paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 min-h-10 border"
                     onKeyDown={(e) => handleKeyDownTags(e, field)}
@@ -192,17 +213,19 @@ const QuestionsForm = ({ clerkUserId }: props) => {
                       {field.value.map((tag: any) => (
                         <Badge
                           key={tag}
-                          onClick={() => handleDeleteTag(tag, field)}
+                          onClick={() => {buttonType !== "edit" && handleDeleteTag(tag, field) } }
                           className="p-3 rounded-md capitalize background-light800_dark300 text-light500 flex items-center justify-center gap-x-1"
                         >
                           {tag}
-                          <Image
-                            src="/assets/icons/close.svg"
-                            width={12}
-                            height={12}
-                            alt="closeIcon"
-                            className="object-contain invert-0 dark:invert cursor-pointer"
-                          />
+                          {buttonType !== "edit" && (
+                            <Image
+                              src="/assets/icons/close.svg"
+                              width={12}
+                              height={12}
+                              alt="closeIcon"
+                              className="object-contain invert-0 dark:invert cursor-pointer"
+                            />
+                          )}
                         </Badge>
                       ))}
                     </div>
@@ -222,9 +245,11 @@ const QuestionsForm = ({ clerkUserId }: props) => {
           disabled={submitting}
         >
           {submitting ? (
-            <>{buttonType === "create" ? "Posting..." : "Editing..."}</>
+            <>
+              {buttonType === "edit" ? "Editing...P" : "Editing...Posting..."}
+            </>
           ) : (
-            <>{buttonType === "create" ? "Ask a question" : "Edit question"}</>
+            <>{buttonType === "edit" ? "Edit Question" : "Ask a question"}</>
           )}
         </Button>
       </form>

@@ -1,6 +1,8 @@
 import { convertTime } from "@/lib/utils";
+import { SignedIn } from '@clerk/nextjs';
 import Link from "next/link";
 import React from "react";
+import EditAndDeleteComponent from "../shared/EditAndDeleteComponent";
 import Metric from "../shared/Metric";
 import Tags from "../shared/Tags";
 
@@ -15,6 +17,7 @@ interface questionCardsProps {
     _id: string;
     name: string;
     userPic: string;
+    clerkId: string;
   };
   votes: string[];
   views: number;
@@ -25,7 +28,7 @@ interface questionCardsProps {
     accepted: boolean;
   }[];
   created: Date;
-  clerkId?:string
+  clerkId?: string;
 }
 const QuestionCards = ({
   clerkId,
@@ -38,20 +41,28 @@ const QuestionCards = ({
   answers,
   created,
 }: questionCardsProps) => {
+  const showeEitAndDeleteButtons = clerkId && auther.clerkId === clerkId;
   return (
     <div
       className="card-wrapper rounded-lg p-5 flex flex-col gap-y-5 "
       key={_id}
     >
-      <div className="flex flex-col gap-y-2">
-        <span className="subtle-regular text-dark300_light700 line-clamp-1 flex sm:hidden">
-          {convertTime(created)}
-        </span>
-        <Link href={`/question/${_id}`}>
-          <span className="sm:h3-semibold base-semibold line-clamp-1 flex-1 text-dark200_light900">
-            {title}
+      <div className="flex justify-between">
+        <div className="flex flex-col gap-y-2">
+          <span className="subtle-regular text-dark300_light700 line-clamp-1 flex sm:hidden">
+            {convertTime(created)}
           </span>
-        </Link>
+          <Link href={`/question/${_id}`}>
+            <span className="sm:h3-semibold base-semibold line-clamp-1 flex-1 text-dark200_light900">
+              {title}
+            </span>
+          </Link>
+        </div>
+        <SignedIn>
+          {showeEitAndDeleteButtons && (
+            <EditAndDeleteComponent type="question" itemId={_id} />
+          )}
+        </SignedIn>
       </div>
       <div className="flex gap-x-4">
         {tags.map((tag) => (
@@ -61,7 +72,7 @@ const QuestionCards = ({
       <div className="flex justify-between max-md:flex-col max-md:gap-y-3 ">
         <Metric
           icon={auther?.userPic}
-          href={`profile/${auther?._id}`}
+          href={`profile/${auther?.clerkId}`}
           auther
           alt="likeIcon"
           value={auther?.name}

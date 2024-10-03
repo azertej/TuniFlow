@@ -35,7 +35,7 @@ const Votes = ({
 
   useEffect(() => {
     viewQuestionAction({
-      userId: currentUser ? currentUser : undefined,
+      userId: currentUser ,
       questionId: questionRef,
     });
   }, [currentUser, questionRef, pathname, router]);
@@ -46,7 +46,6 @@ const Votes = ({
       questionId: questionRef,
       path: pathname,
     });
-    return;
   };
 
   const handleVote = async (action: string) => {
@@ -91,7 +90,6 @@ const Votes = ({
           path: pathname,
         });
       }
-      return;
     }
   };
 

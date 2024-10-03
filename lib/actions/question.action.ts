@@ -1,4 +1,6 @@
 "use server";
+import { Answers } from "@/models/answerModel";
+import { Interactions } from "@/models/interactionModel";
 import { Questions } from "@/models/questionModel";
 import { Tags } from "@/models/tagsModel";
 import { Users } from "@/models/userModel";
@@ -8,7 +10,9 @@ import {
   CreateQuestionParams,
   GetQuestionsParams,
   GetQuestionByIdParams,
-  QuestionVoteParams
+  QuestionVoteParams,
+  DeleteQuestionParams,
+  EditQuestionParams,
 } from "./shared.props.d";
 
 export const getQuestions = async (params: GetQuestionsParams) => {
@@ -133,3 +137,46 @@ export const downvoteQuestion = async (params: QuestionVoteParams) => {
   }
 };
 
+export const deleteQuestion = async (params: DeleteQuestionParams) => {
+  try {
+    await connectToDB();
+    const { questionId, path } = params;
+    await Questions.deleteOne({ _id: questionId });
+    await Interactions.deleteMany({ question: questionId });
+    await Answers.deleteMany({ questionRef: questionId });
+    await Tags.updateMany(
+      { questionRef: questionId },
+      { $pull: { questionRef: questionId } }
+    );
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const updateQuestion = async (params: EditQuestionParams) => {
+  try {
+    await connectToDB();
+    const { questionId, title, explanation, path } = params;
+    await Questions.findByIdAndUpdate(questionId, {
+      title: title,
+      explanation: explanation,
+    });
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const topQuestions = async () => {
+  try {
+    await connectToDB();
+    const questions = await Questions.find({}).sort({ views: -1, upVotes: -1 }).limit(5);
+    return questions
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

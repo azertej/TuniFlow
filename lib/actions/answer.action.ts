@@ -3,11 +3,13 @@ import {
   CreateAnswerParams,
   GetAnswersParams,
   AnswerVoteParams,
+  DeleteAnswerParams,
 } from "./shared.props.d";
 import { connectToDB } from "./../database";
 import { Answers } from "@/models/answerModel";
 import { revalidatePath } from "next/cache";
 import { Questions } from "@/models/questionModel";
+import { Interactions } from "@/models/interactionModel";
 
 export const createAnswer = async (params: CreateAnswerParams) => {
   try {
@@ -59,10 +61,10 @@ export const answerUpVote = async (params: AnswerVoteParams) => {
     const answer = await Answers.findByIdAndUpdate(answerId, updateQuery, {
       new: true,
     });
-    if(!answer) {
-      throw new Error ('answer not found')
+    if (!answer) {
+      throw new Error("answer not found");
     }
-    revalidatePath(path)
+    revalidatePath(path);
   } catch (error) {
     console.log(error);
     throw error;
@@ -86,9 +88,30 @@ export const answerDownVote = async (params: AnswerVoteParams) => {
     const answer = await Answers.findByIdAndUpdate(answerId, updateQuery, {
       new: true,
     });
-    if(!answer) {
-      throw new Error ('answer not found')
+    if (!answer) {
+      throw new Error("answer not found");
     }
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const deleteAnswer = async (params: DeleteAnswerParams) => {
+  try {
+    await connectToDB();
+    const { answerId, path } = params;
+    const answer = await Answers.findById(answerId);
+    if (!answer) {
+      throw new Error("answer not found");
+    }
+    await Answers.deleteOne({ _id: answerId });
+    await Questions.updateMany(
+      { _id: answer.questionRef },
+      { $pull: { answers: answerId } }
+    );
+    await Interactions.deleteMany({answer:answerId})
     revalidatePath(path)
   } catch (error) {
     console.log(error);

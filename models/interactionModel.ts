@@ -23,6 +23,10 @@ const interactionSchema = new Schema({
     ref:'Questions',
     required: true,
   },
+  answer:{
+    type:Schema.Types.ObjectId,
+    ref:'Answers'
+  },
   tags: [
     {
       type: Schema.Types.ObjectId,

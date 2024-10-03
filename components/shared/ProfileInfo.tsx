@@ -11,7 +11,7 @@ const ProfileInfo = ({img,title,href}:profileProps) => {
     <div className='flex  gap-x-1'>
         <Image src={img} height={20} width={20} alt='icon' />
         {href ? (
-            <Link href={href} target='_blank' className='text-blue-600'>
+            <Link href={href} target='_blank' className='text-blue-600 underline'>
                 {title}
             </Link>
         ): (
