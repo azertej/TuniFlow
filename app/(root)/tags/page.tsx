@@ -4,10 +4,14 @@ import NoResult from "@/components/shared/NoResult";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { TagFilters } from "@/constants/filters";
 import { allTags } from "@/lib/actions/tags.action";
+import { SearchParamsProps } from "@/types/index";
 import React from "react";
 
-const Community = async () => {
-  const tags = await allTags({});
+const Tags = async ({ searchParams }: SearchParamsProps) => {
+  const tags = await allTags({
+    searchQuery: searchParams.q,
+    filter:searchParams.filter
+  });
   return (
     <section className="flex flex-col gap-y-8">
       <span className="font-bold text-3xl text-dark100_light900 ">
@@ -15,6 +19,7 @@ const Community = async () => {
       </span>
       <div className="flex gap-x-5 max-sm:flex-col max-sm:gap-y-5">
         <LocalSearch
+          route="/tags"
           placeholder="Search tags..."
           iconPosition="left"
           iconImage="/assets/icons/search.svg"
@@ -40,4 +45,4 @@ const Community = async () => {
   );
 };
 
-export default Community;
+export default Tags;

@@ -72,8 +72,30 @@ export const findUserById = async (params: GetUserByIdParams) => {
 
 export const getUsers = async (params: GetAllUsersParams) => {
   try {
-    connectToDB();
-    const users = await Users.find({}).sort({ createdAt: -1 });
+    await connectToDB();
+    const { searchQuery, filter } = params;
+    const query: FilterQuery<typeof Users> = {};
+    if (searchQuery) {
+      query.$or = [
+        { name: { $regex: new RegExp(searchQuery, "i") } },
+        { userName: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+    let sortFilter = {};
+    switch (filter) {
+      case "new_users":
+        sortFilter = { createdAt: -1 };
+        break;
+      case "old_users":
+        sortFilter = { createdAt: 1 };
+        break;
+      case "top_contributors":
+        sortFilter = { reputation: -1 };
+        break;
+      default:
+        break;
+    }
+    const users = await Users.find(query).sort(sortFilter);
     return { users };
   } catch (error) {
     console.log(error);
@@ -115,15 +137,36 @@ export const savedPost = async (params: ToggleSaveQuestionParams) => {
 export const getAllSavedQuestions = async (params: GetSavedQuestionsParams) => {
   try {
     await connectToDB();
-    const { clerkId,  searchQuery } = params;
+    const { clerkId, searchQuery, filter } = params;
     const query: FilterQuery<typeof Questions> = searchQuery
       ? { title: { $regex: new RegExp(searchQuery, "i") } }
       : {};
+
+    let sortFilter = {};
+    switch (filter) {
+      case "most_recent":
+        sortFilter = { createdAt: 1 };
+        break;
+      case "oldest":
+        sortFilter = { createdAt: -1 };
+        break;
+      case "most_voted":
+        sortFilter = { upVotes: -1 };
+        break;
+      case "most_viewed":
+        sortFilter = { views: -1 };
+        break;
+      case "most_answered":
+        sortFilter = { answers: -1 };
+        break;
+      default:
+        break;
+    }
     const user = await Users.findOne({ clerkId }).populate({
       path: "savedPosts",
       match: query,
       options: {
-        sort: { createdAt: -1 },
+        sort: sortFilter
       },
       populate: [
         { path: "tags", model: Tags, select: "_id name" },
@@ -204,5 +247,3 @@ export const userAnswers = async (params: GetUserStatsParams) => {
     throw error;
   }
 };
-
-

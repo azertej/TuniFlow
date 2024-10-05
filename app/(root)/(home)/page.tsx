@@ -8,9 +8,13 @@ import Link from "next/link";
 import React from "react";
 import QuestionCards from "@/components/cards/QuestionCards";
 import { getQuestions } from "@/lib/actions/question.action";
+import { SearchParamsProps } from "@/types/index";
 
-const Home = async () => {
-  const result = await getQuestions({})
+const Home = async ({searchParams}:SearchParamsProps) => {
+  const result = await getQuestions({
+    searchQuery:searchParams.q,
+    filter:searchParams.filter
+  })
   return (
     <section className="flex flex-col">
       <div className="w-full flex sm:flex-row justify-between flex-col-reverse gap-y-4 ">

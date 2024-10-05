@@ -33,10 +33,28 @@ export const createAnswer = async (params: CreateAnswerParams) => {
 export const getAllAnswers = async (params: GetAnswersParams) => {
   try {
     await connectToDB();
-    const { questionId } = params;
+    const { questionId, sortBy } = params;
+    let sortOption = {};
+    switch (sortBy) {
+      case "highestUpvotes":
+        sortOption = { upVotes: -1 };
+        break;
+      case "lowestUpvotes":
+        sortOption = { upVotes: 1 };
+        break;
+      case "recent":
+        sortOption = { createdAt: -1 };
+        break;
+      case "old":
+        sortOption = { createdAt: 1 };
+        break;
+
+      default:
+        break;
+    }
     const answers = await Answers.find({ questionRef: questionId })
       .populate("answerAuthor", "_id clerkId name userPic")
-      .sort({ createdAt: -1 });
+      .sort(sortOption);
     return { answers };
   } catch (error) {
     console.log(error);
@@ -111,8 +129,8 @@ export const deleteAnswer = async (params: DeleteAnswerParams) => {
       { _id: answer.questionRef },
       { $pull: { answers: answerId } }
     );
-    await Interactions.deleteMany({answer:answerId})
-    revalidatePath(path)
+    await Interactions.deleteMany({ answer: answerId });
+    revalidatePath(path);
   } catch (error) {
     console.log(error);
     throw error;

@@ -4,17 +4,22 @@ import NoResult from "@/components/shared/NoResult";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { TagFilters } from "@/constants/filters";
 import { getTagByID } from "@/lib/actions/tags.action";
+import { URLProps } from "@/types/index";
 import React from "react";
 
-const Tag = async ({ params }: { params: { id: string } }) => {
-  const tag = await getTagByID({ tagId: params.id });
+const Tag = async ({ params, searchParams }: URLProps) => {
+  const tag = await getTagByID({
+    tagId: params.id,
+    searchQuery: searchParams.q,
+  });
   return (
     <section className="flex flex-col gap-y-8 w-full">
       <span className="font-bold text-3xl text-dark100_light900 ">
-       {tag.tagName}
+        {tag.tagName}
       </span>
       <div className="flex gap-x-5 max-sm:flex-col max-sm:gap-y-5">
         <LocalSearch
+          route={`/tags/${params.id}`}
           placeholder="Search tags..."
           iconPosition="left"
           iconImage="/assets/icons/search.svg"

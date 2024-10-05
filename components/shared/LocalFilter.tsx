@@ -8,6 +8,8 @@ import {
   SelectValue,
   SelectGroup,
 } from "@/components/ui/select";
+import { useRouter, useSearchParams } from "next/navigation";
+import { handleFormQuery } from "@/lib/utils";
 
 interface localFilterProps {
   filters: {
@@ -23,9 +25,25 @@ const LocalFilter = ({
   otherClass,
   countainerClass,
 }: localFilterProps) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const filterState = searchParams.get("filter");
+
+  const handleFilterAction = (value: string) => {
+    const newURL = handleFormQuery({
+      params: searchParams.toString(),
+      key: "filter",
+      value,
+    });
+    router.push(newURL, { scroll: false });
+  }
+
   return (
     <div className={` relative ${countainerClass} `}>
-      <Select>
+      <Select
+        onValueChange={handleFilterAction}
+        defaultValue={filterState || undefined}
+      >
         <SelectTrigger
           className={`${otherClass} background-light800_dark300 text-dark500_light700 w-[150px] max-sm:w-full `}
         >
@@ -34,7 +52,11 @@ const LocalFilter = ({
         <SelectContent>
           <SelectGroup>
             {filters.map((filter) => (
-              <SelectItem value={filter.value} key={filter.value} className='text-dark500_light700 background-light800_dark300 '>
+              <SelectItem
+                value={filter.value}
+                key={filter.value}
+                className="text-dark500_light700 background-light800_dark300 "
+              >
                 {" "}
                 {filter.name}{" "}
               </SelectItem>

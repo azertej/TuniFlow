@@ -13,7 +13,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 
-const QuestionPage = async ({ params }: { params: { questionId: string } }) => {
+
+const QuestionPage = async ({ params ,searchParams }:any) => {
   const question = await getQuestionById({ questionId: params.questionId });
   const { userId } = auth();
   if (!userId) redirect("/sign-in");
@@ -87,6 +88,8 @@ const QuestionPage = async ({ params }: { params: { questionId: string } }) => {
         questionId={params.questionId}
         authorId={JSON.stringify(mongoUser._id)}
         answersLength={question.answers.length}
+        page={searchParams?.page}
+        filter={searchParams?.filter}
       />
       <div className="mt-10">
         <AnswersForm

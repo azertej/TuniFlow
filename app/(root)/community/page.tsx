@@ -4,10 +4,14 @@ import NoResult from "@/components/shared/NoResult";
 import LocalSearch from "@/components/shared/search/LocalSearch";
 import { UserFilters } from "@/constants/filters";
 import { getUsers } from "@/lib/actions/user.action";
+import { SearchParamsProps } from "@/types/index";
 import React from "react";
 
-const Community = async () => {
-  const allUsers = await getUsers({});
+const Community = async ({searchParams}:SearchParamsProps) => {
+  const allUsers = await getUsers({
+    searchQuery:searchParams.q,
+    filter:searchParams.filter
+  });
   return (
     <section className="flex flex-col gap-y-8">
       <span className="font-bold text-3xl text-dark100_light900 ">
@@ -15,11 +19,12 @@ const Community = async () => {
       </span>
       <div className="flex gap-x-5 max-sm:flex-col max-sm:gap-y-5">
         <LocalSearch
+        route="/community"
           placeholder="Search users..."
           iconPosition="left"
           iconImage="/assets/icons/search.svg"
         />
-        <LocalFilter filters={UserFilters} otherClass="min-h-[60px]" />
+        <LocalFilter  filters={UserFilters} otherClass="min-h-[60px]" />
       </div>
       <section className="flex justify-center">
         {allUsers && allUsers.users.length > 0 ? (

@@ -4,6 +4,7 @@ import { Interactions } from "@/models/interactionModel";
 import { Questions } from "@/models/questionModel";
 import { Tags } from "@/models/tagsModel";
 import { Users } from "@/models/userModel";
+import { FilterQuery } from "mongoose";
 import { revalidatePath } from "next/cache";
 import { connectToDB } from "./../database";
 import {
@@ -17,13 +18,39 @@ import {
 
 export const getQuestions = async (params: GetQuestionsParams) => {
   try {
-    connectToDB();
-    const questions = await Questions.find({})
+    await connectToDB();
+    const { searchQuery, filter } = params;
+    const query: FilterQuery<typeof Questions> = {};
+    if (searchQuery) {
+      query.$or = [
+        { title: { $regex: new RegExp(searchQuery, "i") } },
+        { explanation: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+
+    let filterSort = {};
+    switch (filter) {
+      case "newest":
+        filterSort = { createdAt: -1 };
+        break;
+      case "recommended":
+        break;
+      case "frequent":
+        filterSort = { views: -1 };
+        break;
+      case "unanswered":
+        query.answers = { $size: 0 };
+        break;
+      default:
+        break;
+    }
+    const questions = await Questions.find(query)
       .populate({ path: "tags", model: Tags })
       .populate({ path: "author", model: Users })
-      .sort({ createdAt: -1 });
+      .sort(filterSort);
 
     return { questions };
+   
   } catch (error) {
     console.log(error);
     throw error;
@@ -173,8 +200,10 @@ export const updateQuestion = async (params: EditQuestionParams) => {
 export const topQuestions = async () => {
   try {
     await connectToDB();
-    const questions = await Questions.find({}).sort({ views: -1, upVotes: -1 }).limit(5);
-    return questions
+    const questions = await Questions.find({})
+      .sort({ views: -1, upVotes: -1 })
+      .limit(5);
+    return questions;
   } catch (error) {
     console.log(error);
     throw error;
