@@ -6,6 +6,7 @@ import { convertTime } from "@/lib/utils";
 import InerrHTML from "./InerrHTML";
 import { SignedIn } from "@clerk/nextjs";
 import EditAndDeleteComponent from "./EditAndDeleteComponent";
+import Paginations from "./Paginations";
 
 interface answerProps extends SearchParamsProps {
   userId: string;
@@ -18,7 +19,10 @@ const AnswerTab = async ({
   searchParams,
   userClerkId,
 }: answerProps) => {
-  const userAnswer = await userAnswers({ userId });
+  const userAnswer = await userAnswers({
+    userId,
+    page: searchParams.page ? +searchParams.page : 1,
+  });
   const showDeleteButton = clerkId && clerkId === userClerkId;
   return (
     <>
@@ -72,7 +76,7 @@ const AnswerTab = async ({
               </div>
               <SignedIn>
                 {showDeleteButton && (
-                  <EditAndDeleteComponent type='answer' itemId={answer._id} />
+                  <EditAndDeleteComponent type="answer" itemId={answer._id} />
                 )}
               </SignedIn>
             </div>
@@ -80,6 +84,10 @@ const AnswerTab = async ({
           </div>
         ))}
       </div>
+      <Paginations
+        pageNumber={searchParams?.page ? +searchParams.page : 1}
+        isNext={userAnswer.isNext}
+      />
     </>
   );
 };

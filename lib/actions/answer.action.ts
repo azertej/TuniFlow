@@ -33,7 +33,7 @@ export const createAnswer = async (params: CreateAnswerParams) => {
 export const getAllAnswers = async (params: GetAnswersParams) => {
   try {
     await connectToDB();
-    const { questionId, sortBy } = params;
+    const { questionId, sortBy, page = 1, pageSize = 3 } = params;
     let sortOption = {};
     switch (sortBy) {
       case "highestUpvotes":
@@ -52,10 +52,21 @@ export const getAllAnswers = async (params: GetAnswersParams) => {
       default:
         break;
     }
+
+    const skipAmount = (page - 1) * pageSize;
+
     const answers = await Answers.find({ questionRef: questionId })
       .populate("answerAuthor", "_id clerkId name userPic")
+      .skip(skipAmount)
+      .limit(pageSize)
       .sort(sortOption);
-    return { answers };
+
+    const totalAnswers = await Answers.countDocuments({
+      questionRef: questionId,
+    });
+
+    const isNext = totalAnswers > answers.length + skipAmount;
+    return { answers, isNext };
   } catch (error) {
     console.log(error);
     throw error;
